@@ -68,23 +68,7 @@ def scene_to_data(cam_pos,mesh):
             edge_index.append([oldToNew[edgepair[0]],oldToNew[edgepair[1]]])
     return x, np.asarray(edge_index).T
     
-def scene_to_x(cam_pos,mesh):
-    """
-    takes in a camera position as a 3 size vector
-    returns x with global indexing with seen set and maxid
-    """
-    eps = 1e-10
-    edge_index = []
-    point_positions = mesh.triangles_center
-    maxid = len(point_positions)-1
-    point_adjacencies = mesh.face_adjacency
-    idset = genId(mesh,cam_pos)
 
-    global_pos = np.array([point_positions[idx] if idx in idset else cam_pos for idx in range(len(point_positions))])
-    x = global_to_camera(global_pos,cam_pos)
-    x[np.abs(x) < eps] = 0
- 
-    return x, idset, maxid
     
 def genVideo(mesh,frames):
     """

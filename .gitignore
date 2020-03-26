@@ -1,0 +1,6 @@
+__pycache__
+data
+data2
+.vscode
+.ipynb_checkpoints
+lightning_logs

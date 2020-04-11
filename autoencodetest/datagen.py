@@ -10,9 +10,9 @@ def create_nums(direc,number=100000,save = 10000):
   
   for i in range(prev,prev+number+1):
     print(i)
-    base = np.random.rand(1,100)
-    copied = np.tile(base,(1000,1))
-    noise = np.random.rand(1000,1)*2-1
+    base = np.random.rand(1,64)
+    copied = np.tile(base,(256,1))
+    noise = np.random.rand(256,1)*2-1
     signal = copied+noise
     data[i] = signal
     if i %save ==0:

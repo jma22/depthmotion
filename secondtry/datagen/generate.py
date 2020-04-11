@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import torch
 from torch.utils import data
 import pickle
+import random
+import math
 
 
 
@@ -49,25 +51,6 @@ def genId(mesh,cam_pos):
     alist = set([x for x in fid if x!=-1])
     return alist
 
-def scene_to_data(cam_pos,mesh):
-    """
-    takes in a camera position as a 3 size vector
-    returns x and edge index (visible)
-    """
-    edge_index = []
-    point_positions = mesh.triangles_center
-    point_adjacencies = mesh.face_adjacency
-    idset = genId(mesh,cam_pos)
-    print(len(idset))
-    oldToNew = {old:new for new,old in enumerate(idset)}
-    global_pos = np.array([point_positions[i]for i in oldToNew.keys()])
-    x = global_to_camera(global_pos,cam_pos)
-    ##edge code
-    for edgepair in point_adjacencies:
-        if edgepair[0] in idset and edgepair[1] in idset:
-            edge_index.append([oldToNew[edgepair[0]],oldToNew[edgepair[1]]])
-    return x, np.asarray(edge_index).T
-    
 
     
 def genVideo(mesh,frames):
@@ -84,53 +67,59 @@ def genVideo(mesh,frames):
     return data
 
 
-def getCurrent(data_path,truth_path):
+def getCurrent(data_path):
     try:
         with open(data_path,"rb") as f:
             data = pickle.load(f)
     except:
         data = {}
             
-    try:
-        with open(truth_path,"rb") as f:
-            truth = pickle.load(f)
-    except:
-        truth = {}
-    return data,truth,len(data.keys())
+    
+    return data,len(data.keys())
 
-def saveCurrent(data_path,truth_path,data,truth):
+def saveCurrent(data_path,data):
     with open(data_path,"wb") as f:
         pickle.dump(data, f)
-    with open(truth_path,"wb") as f:
-        pickle.dump(truth, f)
+ 
 
+def makeUndirect(mesh):
+#### message passing
+ ## make edge array [2xn]
+ ## make coordinate array [6xn]
+    point_adjacencies = mesh.face_adjacency
+    point_adjacencies = point_adjacencies.tolist()
+    newadj = []
+    for pair in point_adjacencies:
+        newadj.append((pair[1],pair[0]))
+        newadj.append((pair[0],pair[1]))
+    return newadj
 
 if __name__ == "__main__":
     cube_path = '/data/vision/billf/scratch/ztzhang/data/non-rigid/3d_models/cube_simple.obj'
     mesh = trimesh.load(cube_path)  
-    data_path = './data2/cube_data.pickle'
-    truth_path = './data2/cube_truth.pickle'
-    data_path_short = './data2/cube_data_short.pickle'
-    truth_path_short = './data2/cube_truth_short.pickle'
+    data_path = '../data/cube_data.pickle'
     point_positions = mesh.triangles_center
 
-    data,truth,currnum = getCurrent(data_path,truth_path)
+    data,currnum = getCurrent(data_path)
     # saveCurrent(data_path_short,truth_path_short,dict((k,data[k]) for k in range(0,1000)),dict((k,truth[k]) for k in range(0,1000)))
 
     ###codefor making new examples
     newadj = makeUndirect(mesh)
-    # data,truth,currnum = getCurrent(data_path,truth_path)
-    for i in range(currnum,currnum+100000):
+    data,currnum = getCurrent(data_path)
+    for i in range(currnum,currnum+100001):
+        theta = random.random()*2*math.pi
+        phi = math.acos(2*random.random()-1)
+        rho = random.random()*2+3
+        first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
+        # first_xyz = np.random.random(size=[3])*3+2
+        features = global_to_camera(point_positions,first_xyz)
         print(i)
-        edge, coordinates, answer, campos = messageData(mesh,newadj,point_positions)
-        # print(type(edge[0]))
         data[i] = {}
-        data[i]['edge'] = edge
-        data[i]['coor'] = coordinates
-        data[i]['cam'] = campos
-        truth[i] = answer
+        data[i]['edge'] = newadj
+        data[i]['coor'] = features
+        data[i]['cam'] = first_xyz
         if i %50000==0: 
-            saveCurrent(data_path,truth_path,data,truth)
+            saveCurrent(data_path,data)
             # print(len(data))
             
 

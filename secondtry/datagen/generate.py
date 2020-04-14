@@ -97,7 +97,7 @@ def makeUndirect(mesh):
 if __name__ == "__main__":
     cube_path = '/data/vision/billf/scratch/ztzhang/data/non-rigid/3d_models/cube_simple.obj'
     mesh = trimesh.load(cube_path)  
-    data_path = '../data/cube_data.pickle'
+    data_path = '../data/inc_cube_data.pickle'
     point_positions = mesh.triangles_center
 
     data,currnum = getCurrent(data_path)
@@ -115,10 +115,14 @@ if __name__ == "__main__":
         features = global_to_camera(point_positions,first_xyz)
         print(i)
         data[i] = {}
+        #incomplete data
+        seen = genId(mesh,first_xyz)
+        data[i]['visible'] = seen
+#         complete data
         data[i]['edge'] = newadj
         data[i]['coor'] = features
         data[i]['cam'] = first_xyz
-        if i %50000==0: 
+        if i %2000==0: 
             saveCurrent(data_path,data)
             # print(len(data))
             

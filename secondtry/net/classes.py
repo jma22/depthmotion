@@ -15,28 +15,79 @@ from dgl.nn.pytorch import EdgeConv
 from dgl.nn.pytorch import GATConv
 from dgl.nn.pytorch import customConv
 
-class incustomNet(nn.Module):
+
+
+class deepedgeNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.layer1 = customConv(6,
-                                32)
-    
-        self.layer4 = customConv(32,3)
+        self.layer1 = customConv(3,64)
+        self.layer2 = customConv(64,64)
+        self.layer3 = customConv(64,64)
+        self.layer4 = customConv(64,64)
+        self.layer5 = customConv(64,3)
         
         
         
-        # self.dropout = nn.Dropout(p=0.6)
+#         self.dropout = nn.Dropout(p=0.5)
       
 
 
     def forward(self, g, features):
-        # dropped = self.dropout(features)
-        x = self.layer1(g, features)
-        x = self.layer4(g, x)
+        x = F.leaky_relu(self.layer1(g, features))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer3(g, x))
+        x = F.leaky_relu(self.layer4(g, x))
+        x = self.layer5(g, x)
+        
+     
+        return x
+
+class deeprecgcnNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = GraphConv(4,64)
+        self.layer2 = GraphConv(64,64)
+        self.layer3 = GraphConv(64,64)
+        self.layer4 = GraphConv(64,64)
+        self.layer5 = GraphConv(64,3)
+        
+        
+        
+#         self.dropout = nn.Dropout(p=0.5)
+      
+
+
+    def forward(self, g, features):
+        x = F.leaky_relu(self.layer1(g, features))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer3(g, x))
+        x = F.leaky_relu(self.layer4(g, x))
+        x = self.layer5(g, x)
+        
+     
+        return x
+
+
+    
+class gatNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = GATConv(3,64,1)
+        self.layer2 = GATConv(64,64,1)
+        self.layer3 = GATConv(64,3,1)
+        
+        
+         
+
+
+    def forward(self, g, features):
+        x = F.leaky_relu(self.layer1(g, features))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = self.layer3(g, x)
         
         
 
-        return x
+        return x[:,0,:]
 
     
 class customNet(nn.Module):
@@ -61,95 +112,7 @@ class customNet(nn.Module):
 
         return x
 
-    
-class deepcustomNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = customConv(3,16)
-        self.layer2 = customConv(16,16)
-        self.layer3 = customConv(16,16)
-        self.layer4 = customConv(16,3)
-        
-        
-        
-        # self.dropout = nn.Dropout(p=0.6)
-      
 
-
-    def forward(self, g, features):
-        # dropped = self.dropout(features)
-        x = self.layer1(g, features)
-        x = self.layer2(g, x)
-        x = self.layer3(g, x)
-        x = self.layer4(g, x)
-        
-        
-
-        return x
-
-
-class customDenseNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = customConv(3,16)
-        self.layer2 = customConv(16,16)
-        self.layer3 = customConv(16,1)
-        self.fc1 = nn.Linear(1764//3,1764//3)
-        self.fc2 = nn.Linear(1764//3,1764//3)
-        self.fc3 = nn.Linear(1764//3,1764)
-
-        
-        # self.dropout = nn.Dropout(p=0.6)
-      
-
-
-    def forward(self, g, features):
-        # dropped = self.dropout(features)
-        x = self.layer1(g, features)
-        x = self.layer2(g, x)
-        x = self.layer3(g, x)
-        x = x.view(1,-1)
-        x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
-        x = self.fc3(x)
-        x = x.view(-1,3)
-        
-
-        return x
-    
-    
-class try10Net(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = EdgeConv(3,3)
-        self.layer2 = EdgeConv(3,1)
-        self.fc1 = nn.Linear(1764//3,10)
-        self.fc2 = nn.Linear(10,128)
-        self.fc3 = nn.Linear(128,256)
-        self.fc4 = nn.Linear(256,512)
-        self.fc5= nn.Linear(512,1024)
-        self.fc6 = nn.Linear(1024,1764)
-        
-        # self.dropout = nn.Dropout(p=0.6)
-      
-
-
-    def forward(self, g, features):
-        # dropped = self.dropout(features)
-        x = self.layer1(g, features)
-        x = self.layer2(g, x)
-        x = x.view(1,-1)
-        x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
-        x = F.leaky_relu(self.fc3(x))
-        x = F.leaky_relu(self.fc4(x))
-        x = F.leaky_relu(self.fc5(x))
-        x = self.fc6(x)
-        x = x.view(-1,3)
-        
-
-        return x
-    
 
     
 class narrowsagemNet(nn.Module):

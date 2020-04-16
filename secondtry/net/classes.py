@@ -17,14 +17,40 @@ from dgl.nn.pytorch import customConv
 
 
 
-class deepedgeNet(nn.Module):
+
+class gateNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.layer1 = customConv(3,64)
-        self.layer2 = customConv(64,64)
-        self.layer3 = customConv(64,64)
-        self.layer4 = customConv(64,64)
-        self.layer5 = customConv(64,3)
+        self.layer1 = GraphConv(4,64)
+        self.layer2 = GraphConv(32,64)
+        self.layer3 = GraphConv(32,64)
+        self.layer4 = GraphConv(32,64)
+        self.layer5 = GraphConv(32,3)
+        
+        
+        
+#         self.dropout = nn.Dropout(p=0.5)
+      
+
+
+    def forward(self, g, features):
+        x = F.leaky_relu(F.glu(self.layer1(g, features)))
+        x = F.leaky_relu(F.glu(self.layer2(g, x)))
+        x = F.leaky_relu(F.glu(self.layer3(g, x)))
+        x = F.leaky_relu(F.glu(self.layer4(g, x)))
+        x = self.layer5(g, x)
+        
+     
+        return x
+
+class deepNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = GraphConv(4,64)
+        self.layer2 = GraphConv(64,64)
+        self.layer3 = GraphConv(64,64)
+        self.layer4 = GraphConv(64,64)
+        self.layer5 = GraphConv(64,3)
         
         
         
@@ -42,14 +68,68 @@ class deepedgeNet(nn.Module):
      
         return x
 
-class deeprecgcnNet(nn.Module):
+
+class deeperNet(nn.Module):
     def __init__(self):
         super().__init__()
         self.layer1 = GraphConv(4,64)
         self.layer2 = GraphConv(64,64)
         self.layer3 = GraphConv(64,64)
         self.layer4 = GraphConv(64,64)
-        self.layer5 = GraphConv(64,3)
+        self.layer5 = GraphConv(64,64)
+        self.layer6 = GraphConv(64,64)
+        self.layer7 = GraphConv(64,64)
+        self.layer8 = GraphConv(64,3)
+        
+        
+        
+#         self.dropout = nn.Dropout(p=0.5)
+      
+
+
+    def forward(self, g, features):
+        x = F.leaky_relu(self.layer1(g, features))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer3(g, x))
+        x = F.leaky_relu(self.layer4(g, x))
+        x = F.leaky_relu(self.layer5(g, x))
+        x = F.leaky_relu(self.layer6(g, x))
+        x = F.leaky_relu(self.layer7(g, x))
+        x = self.layer8(g, x)
+        
+     
+        return x
+    
+class shallowNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = GraphConv(4,64)
+        self.layer2 = GraphConv(64,3)
+ 
+        
+        
+        
+#         self.dropout = nn.Dropout(p=0.5)
+      
+
+
+    def forward(self, g, features):
+        x = F.leaky_relu(self.layer1(g, features))
+        
+        x = self.layer2(g, x)
+        
+     
+        return x
+    
+
+class deepedgeNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = customConv(3,64)
+        self.layer2 = customConv(64,64)
+        self.layer3 = customConv(64,64)
+        self.layer4 = customConv(64,64)
+        self.layer5 = customConv(64,3)
         
         
         

@@ -17,7 +17,7 @@ def evaluate(model, data):
   with torch.no_grad():
     wholeloss = 0
     reconsloss = 0
-    for i in np.random.permutation(list(range(2000,4000))):
+    for i in np.random.permutation(list(range(44000,46000))):
         #normal
 #       g= data[i]["edge"]  #.to(device=device, non_blocking=True)
 #       features= data[i]["coor"]  #.to(device=device, non_blocking=True)
@@ -25,8 +25,9 @@ def evaluate(model, data):
 #reconstruction 
         features = data[i]["coor"]
         newfeatures= np.hstack((data[i]["coor"],np.zeros((588,1))))
-        for idx in data[i]['visible']:
-            newfeatures[idx] = np.array([0,0,0,1])
+        for idx,col in enumerate(newfeatures):
+            if idx not in data[i]['visible']:
+                newfeatures[idx] = np.array([0,0,0,1])
 #         y = features[target:target+1].copy()
         features = torch.Tensor(features).to(device=device, non_blocking=True)
         newfeatures = torch.Tensor(newfeatures).to(device=device, non_blocking=True)
@@ -48,8 +49,8 @@ device = torch.device('cuda' if use_cuda else 'cpu')
 
 
 
-writerb = SummaryWriter('runs/deeprecgcnk8net')    ###CHANGE  THIS#####
-net= deeprecgcnNet().to(device)                   ###CHANGE  THIS#####
+writerb = SummaryWriter('runs/gate8net')    ###CHANGE  THIS#####
+net= gateNet().to(device)                   ###CHANGE  THIS#####
 
 
 
@@ -57,7 +58,7 @@ net= deeprecgcnNet().to(device)                   ###CHANGE  THIS#####
 optimizer =torch.optim.SGD(net.parameters(), lr=0.01)
 net.train()
 train_losses = []
-epochs = 300
+epochs = 500
 dur = []
 k= 8                             ##K NEAREST##
 
@@ -70,13 +71,14 @@ for epoch in range(epochs):
   if epoch <3:
     iterer = np.random.permutation(100)
   else:
-    iterer = np.random.permutation(50000)
+    iterer = np.random.permutation(40000)
   for i in iterer:
 #     g= data[i]["edge"]                      ##K NEAREST##
     features = data[i]["coor"]
     newfeatures= np.hstack((data[i]["coor"],np.zeros((588,1))))
-    for idx in data[i]['visible']:
-        newfeatures[idx] = np.array([0,0,0,1])
+    for idx in range(newfeatures.shape[0]):
+       if idx not in data[i]['visible']:
+           newfeatures[idx] = np.array([0,0,0,1])
 #     y = features[target:target+1].copy()
 
 
@@ -104,6 +106,6 @@ for epoch in range(epochs):
 
   print("Epoch {:05d} | Loss {:.4f} | Test Acc {:.4f} | Time(s) {:.4f}".format(
           epoch, loss.item(), acc, np.mean(dur)))
-  torch.save(net.state_dict(), "models/gcnrecon8.pth")                 ###CHANGE  THIS#####
+  torch.save(net.state_dict(), "models/gate6.pth")                 ###CHANGE  THIS#####
 
 

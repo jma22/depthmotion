@@ -97,7 +97,7 @@ def makeUndirect(mesh):
 if __name__ == "__main__":
     cube_path = '/data/vision/billf/scratch/ztzhang/data/non-rigid/3d_models/cube_simple.obj'
     mesh = trimesh.load(cube_path)  
-    data_path = '../data/inc_cube_data.pickle'
+    data_path = '../data/move_cube_data.pickle'
     point_positions = mesh.triangles_center
 
     data,currnum = getCurrent(data_path)
@@ -111,18 +111,30 @@ if __name__ == "__main__":
         phi = math.acos(2*random.random()-1)
         rho = random.random()*2+3
         first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
-        # first_xyz = np.random.random(size=[3])*3+2
-        features = global_to_camera(point_positions,first_xyz)
+        # lsit of frame number ofdata
+        features = []
+        cam = []
+        seen = []
         print(i)
+        for frame in range(20):
+            features.append(global_to_camera(point_positions,first_xyz))
+            cam.append(first_xyz)
+            seen.append(genId(mesh,first_xyz))
+            theta += (2*random.random()-1)*2*math.pi/18
+            phi += (2*random.random()-1)*2*math.pi/18
+            rho += (2*random.random()-1)*0.2
+            first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
+            
+            
         data[i] = {}
         #incomplete data
-        seen = genId(mesh,first_xyz)
+        
         data[i]['visible'] = seen
 #         complete data
         data[i]['edge'] = newadj
         data[i]['coor'] = features
-        data[i]['cam'] = first_xyz
-        if i %2000==0: 
+        data[i]['cam'] = cam
+        if i %500==0: 
             saveCurrent(data_path,data)
             # print(len(data))
             

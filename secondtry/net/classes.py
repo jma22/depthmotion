@@ -13,7 +13,7 @@ from dgl.nn.pytorch import GraphConv
 from dgl.nn.pytorch import SAGEConv
 from dgl.nn.pytorch import EdgeConv
 from dgl.nn.pytorch import GATConv
-from dgl.nn.pytorch import customConv
+# from dgl.nn.pytorch import customConv
 
 
 
@@ -170,27 +170,27 @@ class gatNet(nn.Module):
         return x[:,0,:]
 
     
-class customNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = customConv(3,32)
+# class customNet(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.layer1 = customConv(3,32)
     
-        self.layer4 = customConv(32,3)
+#         self.layer4 = customConv(32,3)
         
         
         
-        # self.dropout = nn.Dropout(p=0.6)
+#         # self.dropout = nn.Dropout(p=0.6)
       
 
 
-    def forward(self, g, features):
-        # dropped = self.dropout(features)
-        x = self.layer1(g, features)
-        x = self.layer4(g, x)
+#     def forward(self, g, features):
+#         # dropped = self.dropout(features)
+#         x = self.layer1(g, features)
+#         x = self.layer4(g, x)
         
         
 
-        return x
+#         return x
 
 
 

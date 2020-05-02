@@ -75,7 +75,7 @@ for epoch in range(epochs):
   if epoch <3:
     iterer = np.random.permutation(100)
   else:
-    iterer = np.random.permutation(6000)
+    iterer = np.random.permutation(5000)
     ### training loop ###
   for i in iterer:
     """editing data"""

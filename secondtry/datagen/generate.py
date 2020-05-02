@@ -95,9 +95,10 @@ def makeUndirect(mesh):
     return newadj
 
 if __name__ == "__main__":
-    cube_path = '/data/vision/billf/scratch/ztzhang/data/non-rigid/3d_models/cube_simple.obj'
-    mesh = trimesh.load(cube_path)  
-    data_path = '../data/move_cube_data.pickle'
+#     cube_path = '/data/vision/billf/scratch/ztzhang/data/non-rigid/3d_models/cube_simple.obj'
+    monkey_path = '/data/vision/billf/scratch/jma22/depthmotion/3d_model/monkey.obj'
+    mesh = trimesh.load(monkey_path)  
+    data_path = '../data/monkey_data.pickle'
     point_positions = mesh.triangles_center
 
     data,currnum = getCurrent(data_path)
@@ -106,7 +107,7 @@ if __name__ == "__main__":
     ###codefor making new examples
     newadj = makeUndirect(mesh)
     data,currnum = getCurrent(data_path)
-    for i in range(currnum,currnum+100001):
+    for i in range(currnum,currnum+50001):
         theta = random.random()*2*math.pi
         phi = math.acos(2*random.random()-1)
         rho = random.random()*2+3
@@ -116,14 +117,13 @@ if __name__ == "__main__":
         cam = []
         seen = []
         print(i)
-        for frame in range(20):
-            features.append(global_to_camera(point_positions,first_xyz))
-            cam.append(first_xyz)
-            seen.append(genId(mesh,first_xyz))
-            theta += (2*random.random()-1)*2*math.pi/18
-            phi += (2*random.random()-1)*2*math.pi/18
-            rho += (2*random.random()-1)*0.2
-            first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
+        features=global_to_camera(point_positions,first_xyz)
+        cam=first_xyz
+        seen=genId(mesh,first_xyz)
+#         theta += (2*random.random()-1)*2*math.pi/18
+#         phi += (2*random.random()-1)*2*math.pi/18
+#         rho += (2*random.random()-1)*0.2
+#         first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
             
             
         data[i] = {}
@@ -131,10 +131,10 @@ if __name__ == "__main__":
         
         data[i]['visible'] = seen
 #         complete data
-        data[i]['edge'] = newadj
+#         data[i]['edge'] = newadj
         data[i]['coor'] = features
         data[i]['cam'] = cam
-        if i %500==0: 
+        if i %5000==0: 
             saveCurrent(data_path,data)
             # print(len(data))
             

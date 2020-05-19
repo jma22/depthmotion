@@ -3,12 +3,13 @@ import pickle
 
 
 def knn_graph_edges(k):
-#     dist_path = '../data/dist_dict.pickle'
-    dist_path = '../data/monkey_dist_dict.pickle'
+    dist_path = '../data/dist_dict.pickle'
+#     dist_path = '../data/monkey_dist_dict.pickle'
     with open(dist_path,"rb") as f:
       data = pickle.load(f)
     edge_list = []
-    for i in range(968):
+#     for i in range(968):
+    for i in range(588):
         for node,dist in data[i][0:k]:
             edge_list.append((i,node))
     return edge_list

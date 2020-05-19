@@ -20,7 +20,7 @@ def global_to_camera(coordinate,camera_coordinate):
     global_to_camera(np.array([[1,1,1],[2,2,2]]),np.array([2,2,2]))
     """
     x = np.array([-camera_coordinate[0],-camera_coordinate[1],-camera_coordinate[2]])
-    y = np.array([-camera_coordinate[0],-camera_coordinate[1],camera_coordinate[0]**2/camera_coordinate[2]+camera_coordinate[1]**2/camera_coordinate[2]])
+    y = np.array([-camera_coordinate[0],-camera_coordinate[1], camera_coordinate[0]**2/camera_coordinate[2] + camera_coordinate[1]**2/camera_coordinate[2]])
     z = np.cross(x,y)
     x = normalize(x)
     y = normalize(y)
@@ -113,9 +113,9 @@ if __name__ == "__main__":
         rho = random.random()*2+3
         first_xyz = np.array([math.cos(phi) * math.cos(theta) * rho,math.cos(phi) * math.sin(theta) * rho,math.sin(phi) * rho])
         # lsit of frame number ofdata
-        features = []
-        cam = []
-        seen = []
+#         features = []
+#         cam = []
+#         seen = []
         print(i)
         features=global_to_camera(point_positions,first_xyz)
         cam=first_xyz
@@ -134,8 +134,8 @@ if __name__ == "__main__":
 #         data[i]['edge'] = newadj
         data[i]['coor'] = features
         data[i]['cam'] = cam
-        if i %5000==0: 
-            saveCurrent(data_path,data)
+#         if i %==5000: 
+#             saveCurrent(data_path,data)
             # print(len(data))
             
 

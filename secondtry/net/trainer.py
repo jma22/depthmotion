@@ -21,13 +21,12 @@ def evaluate(model, data):
 #       g= data[i]["edge"]  #.to(device=device, non_blocking=True)
 #       features= data[i]["coor"]  #.to(device=device, non_blocking=True)
 #       features = torch.Tensor(features).to(device=device, non_blocking=True)
-#reconstruction 
+        #reconstruction 
         features = data[i]["coor"]
         newfeatures= np.hstack((data[i]["coor"],np.zeros((features.shape[0],1))))
         for idx,col in enumerate(newfeatures):
             if idx not in data[i]['visible']:
                 newfeatures[idx] = np.array([0,0,0,1])
-#         y = features[target:target+1].copy()
         features = torch.Tensor(features).to(device=device, non_blocking=True)
         newfeatures = torch.Tensor(newfeatures).to(device=device, non_blocking=True)
 #         y = torch.Tensor(y).to(device=device, non_blocking=True)
@@ -35,8 +34,6 @@ def evaluate(model, data):
         g = DGLGraph(g)
         logits = model(g, newfeatures)
         wholeloss+= F.l1_loss(logits,features) 
- 
-
   return wholeloss.item()/2000
   #######
 data_path = '../data/inc_cube_data.pickle'

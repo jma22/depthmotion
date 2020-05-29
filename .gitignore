@@ -3,7 +3,6 @@ models
 
 logs
 __pycache__
-data
 data2
 .vscode
 .ipynb_checkpoints

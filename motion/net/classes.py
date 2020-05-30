@@ -17,6 +17,30 @@ from dgl.nn.pytorch import GATConv
 
 from dgl.nn.pytorch import CustomConv
 
+
+class testNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = CustomConv(4,64)
+        self.layer2 = CustomConv(64,64)
+        self.layer5 = CustomConv(64,3)
+      
+
+    def forward(self, g, features):
+        x = F.leaky_relu(self.layer1(g, features))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = F.leaky_relu(self.layer2(g, x))
+        x = self.layer5(g, x)
+        
+     
+        return x
+    
+    
 class lastgcn(nn.Module):
     def __init__(self,cap=30):
         super().__init__()
@@ -118,3 +142,4 @@ class stategcn(nn.Module):
         x = self.layer5(g, last)
 
         return x,counter,fprob
+    

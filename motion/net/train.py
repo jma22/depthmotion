@@ -3,7 +3,9 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.nn import functional as F
 import time
 import numpy as np
-import helpers
+import sys
+sys.path.append('..')
+from helpers import *
 
 
 
